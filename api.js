@@ -19,13 +19,11 @@ app.listen(PORT, () => {
 const insertRow = (body, tableName, res) => {
   const id = uuidv4();
   const keys = Object.keys(body);
-  const successMessage = `Insertion was successful of new ${tableName.slice(
-    0,
-    -1
-  )} of ID: ${id}`;
-  const insertQuery = `INSERT INTO ${tableName}(id, ${keys.join(
-    ", "
-  )}) values('${id}', '${keys.map((key) => body[key]).join("', '")}')`;
+  const itemName = tableName.slice(0, -1);
+  const successMessage = `Insertion was successful of new ${itemName} of ID: ${id}`;
+  const stringifiedKeys = keys.join(", ");
+  const stringifiedValues = keys.map((key) => body[key]).join("', '");
+  const insertQuery = `INSERT INTO ${tableName}(id, ${stringifiedKeys}) values('${id}', '${stringifiedValues}')`;
 
   client.query(insertQuery, (err, _result) => {
     if (!err) {

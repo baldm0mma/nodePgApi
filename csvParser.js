@@ -2,7 +2,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 const { insertRow } = require("./api");
 
-const CSVToJSON = async (path) =>
+const CSVToJSON = (path) =>
   new Promise((resolve, reject) => {
     const results = [];
     fs.createReadStream(path)
