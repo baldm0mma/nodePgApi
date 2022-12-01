@@ -28,4 +28,6 @@ const insertCSVData = async (path) => {
   }
 };
 
+// npx run-func csvParser.js insertCSVData "./test.csv"
+
 module.exports = { insertCSVData };
