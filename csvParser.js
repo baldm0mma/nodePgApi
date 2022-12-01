@@ -28,6 +28,7 @@ const insertCSVData = async (path) => {
   }
 };
 
-// npx run-func csvParser.js insertCSVData "./test.csv"
+// To run the above function from the command line vvv
+// npx run-func csvParser.js insertCSVData *document path*
 
 module.exports = { insertCSVData };
