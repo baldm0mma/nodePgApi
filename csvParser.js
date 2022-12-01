@@ -12,7 +12,7 @@ const CSVToJSON = async (path) =>
         console.log("CSV file successfully processed");
         resolve(results);
       })
-      .on("error", reject);
+      .on("error", reject("didn't work; you're bad..."));
   });
 
 const insertCSVData = async (path) => {
