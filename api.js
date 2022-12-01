@@ -3,6 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
 
+// const data = CSVToJSON("./test.csv").then((data) => data);
+
 client.connect();
 
 const PORT = 3000;
@@ -14,20 +16,24 @@ app.listen(PORT, () => {
   console.log(`Sever is now listening at port ${PORT}`);
 });
 
-const insertRow = (req, res, tableName) => {
+const insertRow = (body, tableName, res) => {
   const id = uuidv4();
-  const body = req.body;
   const keys = Object.keys(body);
-  let insertQuery = `INSERT INTO ${tableName}(id, ${keys.join(
+  const successMessage = `Insertion was successful of new ${tableName.slice(
+    0,
+    -1
+  )} of ID: ${id}`;
+  const insertQuery = `INSERT INTO ${tableName}(id, ${keys.join(
     ", "
   )}) values('${id}', '${keys.map((key) => body[key]).join("', '")}')`;
-  console.log(insertQuery, "insertquery");
 
   client.query(insertQuery, (err, _result) => {
     if (!err) {
-      res.send(
-        `Insertion was successful of new ${tableName.slice(0, -1)} of ID: ${id}`
-      );
+      if (res) {
+        res.send(successMessage);
+      } else {
+        console.log(successMessage);
+      }
     } else throw err;
   });
   client.end;
@@ -57,4 +63,9 @@ app.get("/users/:id", (req, res) => {
   getSingleRow(res, "users", id);
 });
 
-app.post("/users", (req, res) => insertRow(req, res, "users"));
+app.post("/users", (req, res) => {
+  const body = req.body;
+  insertRow(res, body, "users");
+});
+
+module.exports = { insertRow };
