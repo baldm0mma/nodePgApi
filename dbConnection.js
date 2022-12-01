@@ -1,17 +1,11 @@
-const { Client } = require("pg");
+const { client } = require("./dbConfig");
 const { v4: uuidv4 } = require("uuid");
 const { CSVToJSON } = require("./csvParser");
 
-const client = new Client({
-  host: "localhost",
-  user: "postgres",
-  port: 5432,
-  password: "postgres",
-  database: "postgres",
-});
-
+// Connect to PostgreSQL DB
 client.connect();
 
+// Insert single row in dynamic table
 const insertRow = (body, tableName, res) => {
   const id = uuidv4();
   const keys = Object.keys(body);
@@ -33,6 +27,7 @@ const insertRow = (body, tableName, res) => {
   client.end;
 };
 
+// Get all rows of dynamic table
 const getAllRows = (res, tableName) => {
   client.query(`SELECT * FROM ${tableName}`, (err, result) => {
     if (!err) {
@@ -42,6 +37,7 @@ const getAllRows = (res, tableName) => {
   client.end;
 };
 
+// Get single row of dynamic table
 const getSingleRow = (res, tableName, id) => {
   client.query(`SELECT * FROM ${tableName} WHERE id=${id}`, (err, result) => {
     if (!err) {
@@ -51,20 +47,21 @@ const getSingleRow = (res, tableName, id) => {
   client.end;
 };
 
-const insertCSVData = async (path) => {
+// Insert CSV data into table
+const insertCSVData = async (path, tableName) => {
   try {
     const data = await CSVToJSON(path);
     if (!!data?.length) {
       data.forEach((entry) => {
-        insertRow(entry, "users");
+        insertRow(entry, tableName);
       });
     }
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error);
   }
 };
 
 // To run the above function from the command line vvv
-// npx run-func csvParser.js insertCSVData "*filePath.csv*"
+// npx run-func dbConnection.js insertCSVData "<filePath.csv>" "<tableName>"
 
 module.exports = { insertRow, getAllRows, getSingleRow, insertCSVData };

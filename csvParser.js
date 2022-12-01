@@ -1,6 +1,7 @@
 const csv = require("csv-parser");
 const fs = require("fs");
 
+// Pares CSV file
 const CSVToJSON = async (path) =>
   new Promise((resolve, reject) => {
     const results = [];
@@ -11,7 +12,7 @@ const CSVToJSON = async (path) =>
         console.log("CSV file successfully processed");
         resolve(results);
       })
-      .on("error", reject);
+      .on("error", () => reject("Promise rejected in stream"));
   });
 
 module.exports = { CSVToJSON };
