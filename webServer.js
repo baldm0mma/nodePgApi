@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { insertRow, getAllRows, getSingleRow } = require("./dbConnection");
+const { insertRow, getAllRows, getSingleRow } = require("./dbCRUD");
 
 const PORT = 3000;
 
