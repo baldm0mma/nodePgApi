@@ -1,4 +1,16 @@
+const { Client } = require("pg");
 const { v4: uuidv4 } = require("uuid");
+const { CSVToJSON } = require("./csvParser");
+
+const client = new Client({
+  host: "localhost",
+  user: "postgres",
+  port: 5432,
+  password: "postgres",
+  database: "postgres",
+});
+
+client.connect();
 
 const insertRow = (body, tableName, res) => {
   const id = uuidv4();
@@ -39,4 +51,20 @@ const getSingleRow = (res, tableName, id) => {
   client.end;
 };
 
-module.exports = { insertRow, getAllRows, getSingleRow };
+const insertCSVData = async (path) => {
+  try {
+    const data = await CSVToJSON(path);
+    if (!!data?.length) {
+      data.forEach((entry) => {
+        insertRow(entry, "users");
+      });
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// To run the above function from the command line vvv
+// npx run-func csvParser.js insertCSVData "*filePath.csv*"
+
+module.exports = { insertRow, getAllRows, getSingleRow, insertCSVData };
