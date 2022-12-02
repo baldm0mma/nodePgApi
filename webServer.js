@@ -29,3 +29,9 @@ app.post(`/${TABLENAME}`, (req, res) => {
   const body = req.body;
   insertRow(res, body, `${TABLENAME}`);
 });
+
+// Delete User
+app.delete(`/${TABLENAME}/:id`, (req, res) => {
+  const id = req.params.id;
+  deleteRow(res, id, `${TABLENAME}`);
+});

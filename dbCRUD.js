@@ -23,7 +23,7 @@ const insertRow = (res, body, tableName) => {
   const successMessage = `Insertion was successful of new ${itemName} of ID: ${id}`;
   const { stringifiedKeys, stringifiedValues } =
     buildQueryContentFromBody(body);
-  const insertQuery = `INSERT INTO ${tableName}(id, inserted_at, ${stringifiedKeys}) VALUES ('${id}', '${new Date()}' '${stringifiedValues}')`;
+  const insertQuery = `INSERT INTO ${tableName}(id, inserted_at, ${stringifiedKeys}) VALUES ('${id}', '${Date.now()}', '${stringifiedValues}')`;
 
   client.query(insertQuery, (err, _result) => {
     if (!err) {
@@ -38,10 +38,22 @@ const insertRow = (res, body, tableName) => {
 };
 
 // Update row of single dynamic table
-const updateSingleRow = () => {};
+const updateRow = () => {};
 
 // Update row of single dynamic table
-const deleteSingleRow = () => {};
+const deleteRow = (res, id, tableName) => {
+  const query = `DELETE FROM ${tableName} WHERE id=${id}`;
+  client.query(query, (err, _result) => {
+    if (!err) {
+      if (res) {
+        res.send(successMessage);
+      } else {
+        console.log(successMessage);
+      }
+    } else throw err;
+  });
+  client.end;
+};
 
 // Insert CSV data into table
 const insertCSVData = async (path, tableName) => {
@@ -60,4 +72,4 @@ const insertCSVData = async (path, tableName) => {
 // To run the above function from the command line vvv
 // npx run-func dbConnection.js insertCSVData "<filePath.csv>" "<tableName>"
 
-module.exports = { insertRow, getTableData, insertCSVData };
+module.exports = { insertRow, getTableData, insertCSVData, deleteRow };
