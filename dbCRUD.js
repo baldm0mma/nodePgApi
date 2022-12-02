@@ -5,15 +5,25 @@ const { CSVToJSON } = require("./csvParser");
 // Connect to PostgreSQL DB
 client.connect();
 
+// Get table data of dynamic table
+const getTableData = (res, query) => {
+  client.query(query, (err, result) => {
+    if (!err) {
+      res.send(result.rows);
+    } else throw err;
+  });
+  client.end;
+};
+
 // Insert single row in dynamic table
-const insertRow = (body, tableName, res) => {
+const insertRow = (res, body, tableName) => {
   const id = uuidv4();
   const keys = Object.keys(body);
   const itemName = tableName.slice(0, -1);
   const successMessage = `Insertion was successful of new ${itemName} of ID: ${id}`;
   const stringifiedKeys = keys.join(", ");
   const stringifiedValues = keys.map((key) => body[key]).join("', '");
-  const insertQuery = `INSERT INTO ${tableName}(id, ${stringifiedKeys}) values('${id}', '${stringifiedValues}')`;
+  const insertQuery = `INSERT INTO ${tableName}(id, ${stringifiedKeys}) VALUES ('${id}', '${stringifiedValues}')`;
 
   client.query(insertQuery, (err, _result) => {
     if (!err) {
@@ -27,25 +37,11 @@ const insertRow = (body, tableName, res) => {
   client.end;
 };
 
-// Get all rows of dynamic table
-const getAllRows = (res, tableName) => {
-  client.query(`SELECT * FROM ${tableName}`, (err, result) => {
-    if (!err) {
-      res.send(result.rows);
-    } else throw err;
-  });
-  client.end;
-};
+// Update row of single dynamic table
+const updateSingleRow = () => {};
 
-// Get single row of dynamic table
-const getSingleRow = (res, tableName, id) => {
-  client.query(`SELECT * FROM ${tableName} WHERE id=${id}`, (err, result) => {
-    if (!err) {
-      res.send(result.rows);
-    } else throw err;
-  });
-  client.end;
-};
+// Update row of single dynamic table
+const deleteSingleRow = () => {};
 
 // Insert CSV data into table
 const insertCSVData = async (path, tableName) => {
@@ -64,4 +60,4 @@ const insertCSVData = async (path, tableName) => {
 // To run the above function from the command line vvv
 // npx run-func dbConnection.js insertCSVData "<filePath.csv>" "<tableName>"
 
-module.exports = { insertRow, getAllRows, getSingleRow, insertCSVData };
+module.exports = { insertRow, getTableData, insertCSVData };
