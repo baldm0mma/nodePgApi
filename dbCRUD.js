@@ -1,6 +1,7 @@
 const { client } = require("./dbConfig");
 const { v4: uuidv4 } = require("uuid");
 const { CSVToJSON } = require("./csvParser");
+const { buildQueryContentFromBody } = require("./CRUDUtilities");
 
 // Connect to PostgreSQL DB
 client.connect();
@@ -18,11 +19,10 @@ const getTableData = (res, query) => {
 // Insert single row in dynamic table
 const insertRow = (res, body, tableName) => {
   const id = uuidv4();
-  const keys = Object.keys(body);
   const itemName = tableName.slice(0, -1);
   const successMessage = `Insertion was successful of new ${itemName} of ID: ${id}`;
-  const stringifiedKeys = keys.join(", ");
-  const stringifiedValues = keys.map((key) => body[key]).join("', '");
+  const { stringifiedKeys, stringifiedValues } =
+    buildQueryContentFromBody(body);
   const insertQuery = `INSERT INTO ${tableName}(id, ${stringifiedKeys}) VALUES ('${id}', '${stringifiedValues}')`;
 
   client.query(insertQuery, (err, _result) => {
