@@ -23,7 +23,7 @@ const insertRow = (res, body, tableName) => {
   const successMessage = `Insertion was successful of new ${itemName} of ID: ${id}`;
   const { stringifiedKeys, stringifiedValues } =
     buildQueryContentFromBody(body);
-  const insertQuery = `INSERT INTO ${tableName}(id, ${stringifiedKeys}) VALUES ('${id}', '${stringifiedValues}')`;
+  const insertQuery = `INSERT INTO ${tableName}(id, inserted_at, ${stringifiedKeys}) VALUES ('${id}', '${new Date()}' '${stringifiedValues}')`;
 
   client.query(insertQuery, (err, _result) => {
     if (!err) {
